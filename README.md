@@ -1,7 +1,7 @@
 # mcping
 给Minecraft服务器用的
 
-应该支持基岩版、携带版和Java版最新-1.6
+应该支持基岩版、携带版和Java版最新-1.4
 
 ## GET和POST都可以
 
