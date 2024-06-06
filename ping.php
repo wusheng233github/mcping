@@ -4,13 +4,9 @@ function encode_varint($value) {
 	for($i = 0; $i < 5; $i++) {
 		$byte = $value & 0x7F;
 		$value >>= 7;
-		if($value > 0) {
-			$byte |= 0x80;
-		}
+		if($value > 0) $byte |= 0x80;
 		$varint .= chr($byte);
-		if($value == 0) {
-			break;
-		}
+		if($value == 0) break;
 	}
 	return $varint;
 }
@@ -22,13 +18,9 @@ function decode_varint($value) {
 	while($pos < strlen($value)) {
 		$byte = ord($value[$pos++]);
 		$result |= ($byte & 0x7F) << $shift;
-		if(($byte & 0x80) == 0) {
-			return $result;
-		}
+		if(($byte & 0x80) == 0) return $result;
 		$shift += 7;
-		if($shift >= 32) {
-			return false;
-		}
+		if($shift >= 32) return false;
 	}
 	return false;
 }
@@ -40,7 +32,7 @@ function ping($address, $port, $data) {
 	socket_connect($server, $address, $port) or die("无法连接服务器");
 	// 也不知道怎么回事反应特慢，我也不知道我加这个怎么就修好了，可能是凭感觉
 	socket_set_nonblock($server);
-	
+
 	socket_write($server, $data);
 
 	$response = "";
@@ -48,9 +40,7 @@ function ping($address, $port, $data) {
 	$time = time();
 	while(time() <= $time + 2) {
 		$response2 = socket_read($server, 8192, PHP_BINARY_READ);
-		if(!empty($response2)) {
-			$response .= $response2;
-		}
+		if(!empty($response2)) $response .= $response2;
 	}
 	return $response;
 }
@@ -104,7 +94,7 @@ if($ver == "java") {
 		if($type == "text") die("服务端版本: {$ver}\n协议版本: {$pvn}\nMOTD: {$motd}\n最大玩家数量: {$max}\n在线玩家数量: {$online}");
 		exit;
 	}
-	
+
 	if($type == "raw") die($response);
 
 	$datapacketlength = decode_varint(substr($response, 0, 5));
@@ -112,7 +102,7 @@ if($ver == "java") {
 
 	$response = substr($response, 0 + $datapacketlengthlength + 1 + 1);
 	$response = substr($response, strpos($response, '{"'));
-	
+
 	if($type == "decode") die($response);
 	if($type == "text") {
 		$array = json_decode($response, true);
@@ -126,11 +116,11 @@ if($ver == "java") {
 	socket_sendto($server, $data, strlen($data), 0, $address, $port) or die("无法发送数据");
 	socket_recvfrom($server, $data, 1024, 0, $address, $port) or die("无法读取数据");
 	socket_close($server);
-	
+
 	if($type == "raw") die($data);
-	
+
 	$data = explode(";", substr($data, strpos($data, "MCPE;") + 5));
-	
+
 	if($type == "decode") die(json_encode($data));
 	if($type == "text") die("服务端版本: {$data[2]}\n协议版本: {$data[1]}\nMOTD: {$data[0]}\n最大玩家数量: {$data[4]}\n在线玩家数量: {$data[3]}");
 }
