@@ -48,9 +48,7 @@ MOTD: ...
     "description": {
         "text": "A Minecraft Server"
     },
-    "favicon": "data:image/png;base64,...",
-    "enforcesSecureChat": false,
-    "previewsChat": false
+    "favicon": "data:image/png;base64,..."
 }
 ```
 ##### 1.6和1.6以下
